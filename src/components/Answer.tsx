@@ -1,23 +1,16 @@
-// src/components/AnswerChip.tsx
-import React, { useState } from "react";
+import React from "react";
 
 interface AnswerProps {
   text: string;
-  onSelect: (isSelected: boolean) => void;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
-export default function Answer({ text, onSelect }: AnswerProps) {
-  const [isSelected, setIsSelected] = useState(false);
-
-  const handleClick = () => {
-    const newSelectedState = !isSelected;
-    setIsSelected(newSelectedState);
-    onSelect(newSelectedState); // Pass the new state back to the parent component
-  };
+export default function Answer({ text, isSelected, onSelect }: AnswerProps) {
 
   return (
     <button
-      onClick={handleClick}
+      onClick={onSelect}
       className={`px-4 py-2 rounded-full text-lg font-medium transition-all duration-300
         ${
           isSelected

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "module": "esnext",
     "useDefineForClassFields": true,
     "lib": ["dom", "esnext"],
     "allowJs": true,

@@ -1,17 +1,22 @@
 import React from "react";
-import StartView from "./views/StartView";
 import Layout from "./components/Layout";
-import EndView from "./views/EndView";
-import AnswerView from "./views/AnswerView";
+import StartView from "./views/StartView";
 import RoundView from "./views/RoundView";
+import AnswerView from "./views/AnswerView";
+import EndView from "./views/EndView";
+import { useCustomStore } from "./utils/store";
+import { StoreStateType } from "./types/app.types";
 
 export default function App() {
+  const { activeView } = useCustomStore<StoreStateType>("activeView");
   return (
     <Layout>
-      <RoundView />
-      {/* <AnswerView /> */}
-      {/* <EndView /> */}
-      {/* <StartView /> */}
+      <>
+        {activeView === "start" && <StartView />}
+        {activeView === "round" && <RoundView />}
+        {activeView === "answer" && <AnswerView />}
+        {activeView === "end" && <EndView />}
+      </>
     </Layout>
   );
 }
