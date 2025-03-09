@@ -11,7 +11,7 @@ export default function Answer({ text, isSelected, onSelect }: AnswerProps) {
   return (
     <button
       onClick={onSelect}
-      className={`px-4 py-2 rounded-full text-lg font-medium transition-all duration-300
+      className={`px-4 py-2 rounded-full text-lg font-medium cursor-pointer transition-all duration-300
         ${
           isSelected
             ? "bg-blue-500 text-white"
