@@ -3,7 +3,7 @@ import Timer from "../components/Timer";
 import Card from "../components/Card";
 import Answer from "../components/Answer";
 import Button from "../components/Button";
-import { getAnswers, getCards } from "../utils/cards";
+import { getAnswers, getCards } from "../utils/helpers";
 import { store, useCustomStore } from "../utils/store";
 import { StoreStateType } from "../types/app.types";
 

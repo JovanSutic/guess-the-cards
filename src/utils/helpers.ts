@@ -104,11 +104,22 @@ export const getAnswers = (cards: string[]): AnserOptions => {
 
   if (cards.length) {
     const bestAnswer = pokersolver.Hand.solve(cards);
-    const options = Object.keys(allAnswers).filter(
-      (item) => item !== bestAnswer.name.replace(/\s+/g, "")
-    );
 
-    const wrongOptions = getRandomItems(options, 2);
+    const wrongOptions = [];
+
+    while (wrongOptions.length < 2) {
+      const wrong =
+        Object.keys(allAnswers)[
+          Math.floor(Math.random() * Object.keys(allAnswers).length)
+        ];
+      if (
+        wrong !== bestAnswer.name.replace(/\s+/g, "") &&
+        wrong !== wrongOptions[0]
+      ) {
+        wrongOptions.push(wrong);
+      }
+    }
+
     const res = [
       allAnswers[bestAnswer.name.replace(/\s+/g, "")],
       allAnswers[wrongOptions[0]],
@@ -124,4 +135,16 @@ export const getAnswers = (cards: string[]): AnserOptions => {
   }
 
   return { answers: [], correct: "" };
+};
+
+export const getAnswerSentence = (word: string): string => {
+  const starters = [
+    "If I had to guess, I'd say this is exactly what we needed",
+    "It’s funny how the right thing always shows up at the right time – like this, the word.",
+    "You know, it’s like everything finally clicked into place after hearing this",
+    "In the end, it’s clear this is the missing piece we’ve been looking for",
+    "I have a feeling this is going to make all the difference",
+  ];
+
+  return `${starters[Math.floor(Math.random() * starters.length)]} - ${word}`;
 };

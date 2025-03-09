@@ -3,10 +3,11 @@ import React from "react";
 interface TypographyProps {
   text: string;
   variant?: "h1" | "h2" | "h3" | "p";
+  style?: "regular" | "error" | "tip";
 }
 
-export default function Typography({ text, variant = "p" }: TypographyProps) {
-  let typographyClass = "text-gray-900";
+export default function Typography({ text, variant = "p", style = "regular" }: TypographyProps) {
+  let typographyClass = `${style === "error" ? "text-red-600" : "text-gray-900"} ${style === "tip" && 'italic'}`;
 
   switch (variant) {
     case "h1":

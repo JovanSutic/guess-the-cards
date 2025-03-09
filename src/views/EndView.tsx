@@ -19,11 +19,10 @@ export default function EndView() {
 
       <div>
         <div className="text-center mb-2">
-          <Typography variant="p" text={`Games played: ${gameCount}`} />
+          <Typography text={`Games played: ${gameCount}`} />
         </div>
         <div className="text-center">
           <Typography
-            variant="p"
             text={`Total correct answers: ${correctCount}`}
           />
         </div>
