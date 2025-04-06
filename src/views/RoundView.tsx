@@ -4,11 +4,15 @@ import Card from "../components/Card";
 import Answer from "../components/Answer";
 import Button from "../components/Button";
 import { getAnswers, getCards } from "../utils/helpers";
-import { store, useCustomStore } from "../utils/store";
+import { dispatch, useCustomStore } from "../utils/store";
 import { StoreStateType } from "../types/app.types";
 
 export default function RoundView() {
-  const { usedCards, time, userAnswer } = useCustomStore<StoreStateType>(["usedCards", "time", "userAnswer"]);
+  const { usedCards, time, userAnswer } = useCustomStore<StoreStateType>([
+    "usedCards",
+    "time",
+    "userAnswer",
+  ]);
   const cards = useMemo(() => {
     return getCards(usedCards);
   }, []);
@@ -21,10 +25,11 @@ export default function RoundView() {
 
   useEffect(() => {
     if (roundAnswer.correct) {
-      store.setState("correctAnswer", (state: StoreStateType) => ({
-        ...state,
-        correctAnswer: roundAnswer.correct,
-      }));
+      dispatch({
+        type: "CORRECT_ANSWER",
+        payload: roundAnswer.correct,
+        part: "correctAnswer",
+      });
     }
   }, [roundAnswer]);
 
@@ -34,10 +39,11 @@ export default function RoundView() {
         <Timer
           startTime={time}
           onTimeUp={() =>
-            store.setState("activeView", (state: StoreStateType) => ({
-              ...state,
-              activeView: "end",
-            }))
+            dispatch({
+              type: "CHANGE_VIEW",
+              payload: { view: "end" },
+              part: "activeView",
+            })
           }
         />
       </div>
@@ -54,10 +60,13 @@ export default function RoundView() {
             key={item}
             text={item}
             isSelected={item === userAnswer}
-            onSelect={() => store.setState("userAnswer", (state: StoreStateType) => ({
-              ...state,
-              userAnswer: item,
-            }))}
+            onSelect={() =>
+              dispatch({
+                type: "ASSIGN_ANSWER",
+                payload: item,
+                part: "userAnswer",
+              })
+            }
           />
         ))}
       </div>
@@ -66,11 +75,13 @@ export default function RoundView() {
         <Button
           text="Submit answer"
           disabled={!userAnswer}
-          onClick={() => store.setState("activeView", (state: StoreStateType) => ({
-            ...state,
-            activeView: "answer",
-            usedCards: [...state.usedCards, ...cards],
-          }))}
+          onClick={() =>
+            dispatch({
+              type: "SUBMIT_ANSWER",
+              payload: { view: "answer", cards: cards },
+              part: ["activeView", "usedCards"],
+            })
+          }
         />
       </div>
     </div>

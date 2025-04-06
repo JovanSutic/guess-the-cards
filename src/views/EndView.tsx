@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "../components/Typography";
 import Button from "../components/Button";
-import { store, useCustomStore } from "../utils/store";
+import { dispatch, useCustomStore } from "../utils/store";
 import { StoreStateType } from "../types/app.types";
 
 export default function EndView() {
@@ -22,9 +22,7 @@ export default function EndView() {
           <Typography text={`Games played: ${gameCount}`} />
         </div>
         <div className="text-center">
-          <Typography
-            text={`Total correct answers: ${correctCount}`}
-          />
+          <Typography text={`Total correct answers: ${correctCount}`} />
         </div>
       </div>
 
@@ -32,8 +30,10 @@ export default function EndView() {
         <Button
           text="Play new game"
           onClick={() =>
-            store.setState(
-              [
+            dispatch({
+              type: "NEW_GAME",
+              payload: { view: "round" },
+              part: [
                 "activeView",
                 "time",
                 "currentTime",
@@ -42,18 +42,7 @@ export default function EndView() {
                 "usedCards",
                 "correctCount",
               ],
-              (state: StoreStateType) => ({
-                ...state,
-                activeView: "round",
-                currentTime: 100,
-                time: 100,
-                correctAnswer: "",
-                userAnswer: "",
-                roundCount: 1,
-                gameCount: state.gameCount + 1,
-                usedCards: [],
-              })
-            )
+            })
           }
         />
       </div>

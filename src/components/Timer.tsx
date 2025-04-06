@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { store, useCustomStore } from "../utils/store";
+import { dispatch, useCustomStore } from "../utils/store";
 import { StoreStateType } from "../types/app.types";
 
 interface TimerProps {
@@ -17,10 +17,10 @@ export default function Timer({ onTimeUp }: TimerProps) {
     }
 
     const timer = setInterval(() => {
-      store.setState("currentTime", (state: StoreStateType) => ({
-        ...state,
-        currentTime: state.currentTime - 1,
-      }));
+      dispatch({
+        type: "SET_TIME",
+        part: "currentTime",
+      });
     }, 1000);
 
     return () => clearInterval(timer);

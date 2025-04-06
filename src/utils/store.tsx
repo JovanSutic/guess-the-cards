@@ -1,35 +1,34 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSyncExternalStore } from "react";
-
-export type StateKey<T extends Record<string, any>> = keyof T;
-export type StateKeyOrKeys<T extends Record<string, any>> =
-  | StateKey<T>
-  | StateKey<T>[];
+import { Action, ReducerType, StateKey, StateKeyOrKeys } from "../types/app.types";
 
 
 class Store<T extends Record<string, any>> {
   state: T;
-  subscribers: Record<keyof T, ((...args: any[]) => any)[]>;
+  subscribers: Record<keyof T, Function[]>;
+  reducers: Record<string, (state: T, action: Action) => T> = {};
 
   constructor(initialState: T) {
     this.state = { ...initialState };
     this.subscribers = Object.keys(initialState).reduce((acc, key) => {
       acc[key as keyof T] = [];
       return acc;
-    }, {} as Record<keyof T, ((...args: any[]) => any)[]>);
+    }, {} as Record<keyof T, Function[]>);
   }
 
   getState() {
     return this.state;
   }
 
-  setState(part: StateKeyOrKeys<T>, updateFunc: (state: T) => T) {
-    const newState = updateFunc(this.state);
-    this.state = newState;
-    this.notifySubscribers(part);
+  addReducer(
+    actionType: ReducerType,
+    reducer: (state: T, action: Action) => T
+  ) {
+    this.reducers[actionType] = reducer;
   }
 
-  subscribe(part: StateKeyOrKeys<T>, subscriber: (...args: any[]) => any) {
+  subscribe(part: StateKeyOrKeys<T>, subscriber: Function) {
     if (Array.isArray(part)) {
       part.forEach((p) => {
         this.subscribers[p].push(() => subscriber());
@@ -46,6 +45,20 @@ class Store<T extends Record<string, any>> {
       });
     } else {
       this.subscribers[part]?.forEach((subscriber) => subscriber());
+    }
+  }
+
+  triggerDispatch(action: Action) {
+    if (!this.state) {
+      throw new Error("Store is not initialized.");
+    }
+
+    const reducer = this.reducers[action.type];
+    if (reducer) {
+      this.state = reducer(this.state, action);
+      this.notifySubscribers(action.part);
+    } else {
+      console.error(`No reducer found for action type: ${action.type}`);
     }
   }
 }
@@ -92,4 +105,12 @@ export function useCustomStore<T extends Record<StateKey<T>, any>>(
   };
 
   return useSyncExternalStore(subscribe, getSnapshot);
+}
+
+export function dispatch(action: Action) {
+  if (!store) {
+    throw new Error("Store was used before it is initialized.");
+  }
+
+  store.triggerDispatch(action);
 }
